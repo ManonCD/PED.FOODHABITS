@@ -1,4 +1,4 @@
-.@title stomach.db
+#' @title stomach.db
 #' @description This function is the main workhorse to pull data from databases and some initial filtering of data used in fish food diet analyses. Results are saved and can be reloaded using this function.
 #' @param DS default is \code{'complete.redo'} This is the main switch that selects which data source to load or operate.
 #' Options for DS include: 'complete' (Others can be added later).
@@ -18,8 +18,8 @@
 #' @export
 #'
 
-utils::globalVariables(c("oracle.server", "oracle.username", "oracle.password"))
-shtomach.db = function( DS="complete.redo",
+utils::globalVariables(c("oracle.server", "oracle.stomach.username", "oracle.stomach.password"))
+stomach.db = function( DS="complete.redo",
                         this.oracle.server=oracle.server,
                         this.oracle.username=oracle.stomach.username,
                         this.oracle.password=oracle.stomach.password,
