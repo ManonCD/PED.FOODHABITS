@@ -18,7 +18,6 @@
 #' @export
 #'
 
-utils::globalVariables(c("oracle.server", "oracle.stomach.username", "oracle.stomach.password"))
 stomach.db = function( DS="complete.redo",
                         this.oracle.server=oracle.server,
                         this.oracle.username=oracle.stomach.username,
