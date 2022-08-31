@@ -1,0 +1,15 @@
+Package: bio.stomach
+Title: Package that extracts data from all available ORACLE datasources to acquire food habits data
+Version: 0.4
+Authors@R: c( person("Manon", "Cassista-Da Ros", email="manon.cassista-daros@dfo-mpo.gc.ca", role=c("aut", "cre")) )
+Description: This project interacts with the functionality of other 'bio'- based projects to supplement the work produced in this package.
+Depends:
+  R (>= 3.0.0),
+  lubridate,
+  DBI
+Enhances:
+  ROracle
+License: MIT + file LICENSE
+LazyData: true
+  RoxygenNote: 5.0.1
+RoxygenNote: 6.1.1
