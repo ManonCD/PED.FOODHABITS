@@ -95,7 +95,14 @@ stomach.db = function( DS="complete.redo",
     dat$dd.dddd[!is.na(dat$ddmm.mm)&abs(dat$ddmm.mm)<90]<-dat$ddmm.mm[!is.na(dat$ddmm.mm)&abs(dat$ddmm.mm)<90]
     return(dat$dd.dddd)
   }
-  
+ 
+# make the oracle connection
+thiscon <- ROracle::dbConnect(DBI::dbDriver("Oracle"), this.oracle.username, this.oracle.password, this.oracle.server)
+if (is.null(thiscon)){
+   cat("No valid connection, aborting\n")
+   return()
+} 
+
   ############################# FOOD HABITS DATA HANDLING FUNCTIONS  #############
   # The processes below are now discrete functions. Each takes a 'redo'
   # parameter.  If redo=T, than the data is re-extracted from Oracle prior to
@@ -122,7 +129,7 @@ stomach.db = function( DS="complete.redo",
   
   if (any(DS %in% c("complete","complete.redo"))) {
     complete.flag = ifelse(any(DS %in% c("complete.redo")),T,F)
-    do.complete(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+    do.stomach_data(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
   }else{
   }
   gc()
