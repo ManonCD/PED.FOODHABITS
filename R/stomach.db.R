@@ -99,7 +99,7 @@ stomach.db = function( DS="complete.redo",
   # loading.  If F, than the data is simply loaded from the
   do.groundfish<-function(con=NULL, redo = F, this_showprogress=showprogress){
     ############################# STOMACH DATA VIEW ##########################
-    r_nm = file.path(rdataPath, "STOMACH_GS.DATA.rdata")
+    r_nm = file.path(rdataPath, "GS.data.rdata")
     if (redo){
       c_nm = paste0(file.path(csvPath,paste0("GS.data.",ts)),".csv")
       Sys.setenv(TZ = 'GMT')
@@ -109,9 +109,9 @@ stomach.db = function( DS="complete.redo",
       STOMACH_DATA_VW$DATE <- paste0(lubridate::year(STOMACH_DATA_VW$SDATE),"-",
                                      sprintf("%02d",lubridate::month(STOMACH_DATA_VW$SDATE)),"-",
                                      sprintf("%02d",lubridate::day(STOMACH_DATA_VW$SDATE)))
-      STOMACH_DATA_VW<-subset(STOMACH_DATA_VW,DATASOURCE=="GS")
-      save(STOMACH_DATA_VW, file=r_nm, compress=T)
-      utils::write.csv(STOMACH_DATA_VW, c_nm,row.names = F)
+      GS.data<-subset(STOMACH_DATA_VW,DATASOURCE=="GS")
+      save(GS.data, file=r_nm, compress=T)
+      utils::write.csv(GS.data, c_nm,row.names = F)
       if (this_showprogress)cat(paste("Saved:\n\t",r_nm,"\n\t",c_nm,"\n"))
     }
     load(r_nm, .GlobalEnv)
@@ -120,13 +120,13 @@ stomach.db = function( DS="complete.redo",
 
   do.speclist<-function(con=NULL, redo = F, this_showprogress=showprogress){
     ############################# STOMACH SPECIES LIST DATA ##########################
-    r_nm = file.path(rdataPath, "STOMACH.SDSPEC.rdata")
+    r_nm = file.path(rdataPath, "species.data.rdata")
     if (redo){
       c_nm = paste0(file.path(csvPath,paste0("species.data",ts)),".csv")
       
-      STOMACH.SDSPEC<-ROracle::dbGetQuery(con,"select * from MFD_STOMACH.SDSPEC")
-      save(STOMACH.SDSPEC, file=r_nm, compress=T)
-      utils::write.csv(STOMACH.SDSPEC, c_nm,row.names = F)
+      species.data<-ROracle::dbGetQuery(con,"select * from MFD_STOMACH.SDSPEC")
+      save(species.data, file=r_nm, compress=T)
+      utils::write.csv(species.data, c_nm,row.names = F)
       if (this_showprogress)cat(paste("Saved:\n\t",r_nm,"\n\t",c_nm,"\n"))
     }
     load(r_nm, .GlobalEnv)
