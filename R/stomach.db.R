@@ -19,11 +19,11 @@
 #'
 
 stomach.db = function( DS="complete.redo",
-                        this.oracle.server=oracle.server,
-                        this.oracle.username=oracle.stomach.username,
-                        this.oracle.password=oracle.stomach.password,
-                        datadirectory = datadirectory,
-                        showprogress = F) {
+                       this.oracle.server=oracle.server,
+                       this.oracle.username=oracle.stomach.username,
+                       this.oracle.password=oracle.stomach.password,
+                       datadirectory = datadirectory,
+                       showprogress = F) {
   
   DS = tolower(DS)   #make DS parameter case-insensitive
   ts <- Sys.Date()   #create time stamp
@@ -95,19 +95,19 @@ stomach.db = function( DS="complete.redo",
     dat$dd.dddd[!is.na(dat$ddmm.mm)&abs(dat$ddmm.mm)<90]<-dat$ddmm.mm[!is.na(dat$ddmm.mm)&abs(dat$ddmm.mm)<90]
     return(dat$dd.dddd)
   }
- 
-# make the oracle connection
-thiscon <- ROracle::dbConnect(DBI::dbDriver("Oracle"), this.oracle.username, this.oracle.password, this.oracle.server)
-if (is.null(thiscon)){
-   cat("No valid connection, aborting\n")
-   return()
-} 
-
+  
+  # make the oracle connection
+  thiscon <- ROracle::dbConnect(DBI::dbDriver("Oracle"), this.oracle.username, this.oracle.password, this.oracle.server)
+  if (is.null(thiscon)){
+    cat("No valid connection, aborting\n")
+    return()
+  } 
+  
   ############################# FOOD HABITS DATA HANDLING FUNCTIONS  #############
   # The processes below are now discrete functions. Each takes a 'redo'
   # parameter.  If redo=T, than the data is re-extracted from Oracle prior to
   # loading.  If F, than the data is simply loaded from the
-  do.stomach_data<-function(con=NULL, redo = F, this_showprogress=showprogress){
+  do.complete<-function(con=NULL, redo = F, this_showprogress=showprogress){
     ############################# STOMACH DATA VIEW ##########################
     r_nm = file.path(rdataPath, "STOMACH_DATA_VW.rdata")
     if (redo){
@@ -129,10 +129,9 @@ if (is.null(thiscon)){
   
   if (any(DS %in% c("complete","complete.redo"))) {
     complete.flag = ifelse(any(DS %in% c("complete.redo")),T,F)
-    do.stomach_data(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+    do.complete(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
   }else{
   }
   gc()
   #RODBC::odbcClose(thiscon)
 }
-
