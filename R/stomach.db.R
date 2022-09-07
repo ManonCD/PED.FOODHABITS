@@ -71,11 +71,8 @@ stomach.db = function( DS="complete.redo",
     if (showprogress) cat(paste(".csv files:",csvPath,"\n"))
   }
   
-  ############################# HELPER FUNCTIONS ##########################
+############################ HELPER FUNCTIONS #################################
   convert.dd.dddd<-function(x){
-    #stolen on 20190226 from
-    #https://github.com/PopulationEcologyDivision/bio.utilities/blob/master/R/convert.dd.dddd.r
-    #simplified since all shrimp coords used the default dec.deg format
     dat<-data.frame(ddmm.mm=x,dd.dddd=NA)
     #degrees-minutes-seconds -> degrees
     ddmmss<-dat$ddmm.mm[!is.na(dat$ddmm.mm)&abs(dat$ddmm.mm)>9000]
@@ -95,13 +92,6 @@ stomach.db = function( DS="complete.redo",
     dat$dd.dddd[!is.na(dat$ddmm.mm)&abs(dat$ddmm.mm)<90]<-dat$ddmm.mm[!is.na(dat$ddmm.mm)&abs(dat$ddmm.mm)<90]
     return(dat$dd.dddd)
   }
-  
-  # make the oracle connection
-  thiscon <- ROracle::dbConnect(DBI::dbDriver("Oracle"), this.oracle.username, this.oracle.password, this.oracle.server)
-  if (is.null(thiscon)){
-    cat("No valid connection, aborting\n")
-    return()
-  } 
   
   ############################# FOOD HABITS DATA HANDLING FUNCTIONS  #############
   # The processes below are now discrete functions. Each takes a 'redo'
@@ -126,11 +116,80 @@ stomach.db = function( DS="complete.redo",
     load(r_nm, .GlobalEnv)
     if (this_showprogress)cat(paste("Loaded:",r_nm,"\n"))
   }
+
+  do.speclist<-function(con=NULL, redo = F, this_showprogress=showprogress){
+    ############################# STOMACH SPECIES LIST DATA ##########################
+    r_nm = file.path(rdataPath, "STOMACH.SDSPEC.rdata")
+    if (redo){
+      c_nm = paste0(file.path(csvPath,paste0("STOMACH.SDSPEC",ts)),".csv")
+      
+      STOMACH.SDSPEC<-ROracle::dbGetQuery(con,"select * from MFD_STOMACH.SDSPEC")
+      save(STOMACH.SDSPEC, file=r_nm, compress=T)
+      utils::write.csv(STOMACH.SDSPEC, c_nm,row.names = F)
+      if (this_showprogress)cat(paste("Saved:\n\t",r_nm,"\n\t",c_nm,"\n"))
+    }
+    load(r_nm, .GlobalEnv)
+    if (this_showprogress)cat(paste("Loaded:",r_nm,"\n"))
+  }
+  
+# Make the oracle connection
+  thiscon <- ROracle::dbConnect(DBI::dbDriver("Oracle"), this.oracle.username, this.oracle.password, this.oracle.server)
+  if (is.null(thiscon)){
+    cat("No valid connection, aborting\n")
+    return()
+  }
   
   if (any(DS %in% c("complete","complete.redo"))) {
     complete.flag = ifelse(any(DS %in% c("complete.redo")),T,F)
-    do.complete(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+    do.speclist(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+#    do.comlogs(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+#    do.details(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+#    do.observer(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+#    do.millim(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+#    do.totals(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+#    do.totalsfemtran(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+#    do.juveniles(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
   }else{
+    if (grepl(DS, pattern = "speclist")){
+      speclist.flag = ifelse(DS %in% c("speclist.redo"),T,F)
+      do.speclist(con=thiscon,redo = speclist.flag, this_showprogress=showprogress)
+    }else{
+#    if (grepl(DS, pattern = "comlogs")){
+#      comlogs.flag = ifelse(DS %in% c("comlogs.redo"),T,F)
+#      do.comlogs(con=thiscon,redo = comlogs.flag, this_showprogress=showprogress)
+#    }
+#    if (grepl(DS, pattern = "details")){
+#      details.flag = ifelse(DS %in% c("details.redo"),T,F)
+#      do.details(con=thiscon,redo=details.flag, this_showprogress=showprogress)
+#    }
+#   if (grepl(DS, pattern = "observer")){
+#      observer.flag = ifelse(DS %in% c("observer.redo"),T,F)
+#      do.observer(con=thiscon,redo=observer.flag, this_showprogress=showprogress)
+#    }
+#   if (grepl(DS, pattern = "millim")){
+#      millim.flag = ifelse(DS %in% c("millim.redo"),T,F)
+#      do.millim(con=thiscon,redo= millim.flag, this_showprogress=showprogress)
+#    }
+#    if (grepl(DS, pattern = "totalsfemtran")){
+#      totalsfemtran.flag = ifelse(DS %in% c("totalsfemtran.redo"),T,F)
+#      do.totalsfemtran(con=thiscon,redo=totalsfemtran.flag, this_showprogress=showprogress)
+#    }
+#    if (grepl(DS, pattern = "totals") & nchar(DS) < 12){
+#      # to prevent this check from accidentally grabbing
+#      # 'totalsfemtran', it is more specific than the others (i.e. nchar(DS) <12)
+#      # this will catch 'totals' or 'totals.redo'
+#      totals.flag = ifelse(DS %in% c("totals.redo"),T,F)
+#      do.totals(con=thiscon,redo=totals.flag, this_showprogress=showprogress)
+#    }
+#    if (grepl(DS, pattern = "juveniles")){
+#      juveniles.flag = ifelse(DS %in% c("juveniles.redo"),T,F)
+#      do.juveniles(con=thiscon,redo=juveniles.flag, this_showprogress=showprogress)
+#    }
+  }
+#    if (any(DS %in% c("complete","complete.redo"))) {
+#        complete.flag = ifelse(any(DS %in% c("complete.redo")),T,F)
+#        do.complete(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+#  }else{
   }
   gc()
   #RODBC::odbcClose(thiscon)
