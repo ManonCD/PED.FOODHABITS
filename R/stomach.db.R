@@ -99,9 +99,9 @@ stomach.db = function( DS="complete.redo",
   # loading.  If F, than the data is simply loaded from the
   do.groundfish<-function(con=NULL, redo = F, this_showprogress=showprogress){
     ############################# STOMACH DATA VIEW ##########################
-    r_nm = file.path(rdataPath, "STOMACH_DATA_VW.rdata")
+    r_nm = file.path(rdataPath, "STOMACH_GS.DATA.rdata")
     if (redo){
-      c_nm = paste0(file.path(csvPath,paste0("STOMACH_DATA_VW.",ts)),".csv")
+      c_nm = paste0(file.path(csvPath,paste0("GS.data.",ts)),".csv")
       Sys.setenv(TZ = 'GMT')
       Sys.setenv(ORA_SDTZ = 'GMT')
       STOMACH_DATA_VW<-ROracle::dbGetQuery(con,"select * from MFD_STOMACH.STOMACH_DATA_VW")
@@ -122,7 +122,7 @@ stomach.db = function( DS="complete.redo",
     ############################# STOMACH SPECIES LIST DATA ##########################
     r_nm = file.path(rdataPath, "STOMACH.SDSPEC.rdata")
     if (redo){
-      c_nm = paste0(file.path(csvPath,paste0("STOMACH.SDSPEC",ts)),".csv")
+      c_nm = paste0(file.path(csvPath,paste0("species.data",ts)),".csv")
       
       STOMACH.SDSPEC<-ROracle::dbGetQuery(con,"select * from MFD_STOMACH.SDSPEC")
       save(STOMACH.SDSPEC, file=r_nm, compress=T)
