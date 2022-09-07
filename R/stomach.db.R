@@ -97,7 +97,7 @@ stomach.db = function( DS="complete.redo",
   # The processes below are now discrete functions. Each takes a 'redo'
   # parameter.  If redo=T, than the data is re-extracted from Oracle prior to
   # loading.  If F, than the data is simply loaded from the
-  do.complete<-function(con=NULL, redo = F, this_showprogress=showprogress){
+  do.groundfish<-function(con=NULL, redo = F, this_showprogress=showprogress){
     ############################# STOMACH DATA VIEW ##########################
     r_nm = file.path(rdataPath, "STOMACH_DATA_VW.rdata")
     if (redo){
@@ -109,6 +109,7 @@ stomach.db = function( DS="complete.redo",
       STOMACH_DATA_VW$DATE <- paste0(lubridate::year(STOMACH_DATA_VW$SDATE),"-",
                                      sprintf("%02d",lubridate::month(STOMACH_DATA_VW$SDATE)),"-",
                                      sprintf("%02d",lubridate::day(STOMACH_DATA_VW$SDATE)))
+      STOMACH_DATA_VW<-subset(STOMACH_DATA_VW,DATASOURCE=="GS")
       save(STOMACH_DATA_VW, file=r_nm, compress=T)
       utils::write.csv(STOMACH_DATA_VW, c_nm,row.names = F)
       if (this_showprogress)cat(paste("Saved:\n\t",r_nm,"\n\t",c_nm,"\n"))
@@ -142,7 +143,7 @@ stomach.db = function( DS="complete.redo",
   if (any(DS %in% c("complete","complete.redo"))) {
     complete.flag = ifelse(any(DS %in% c("complete.redo")),T,F)
     do.speclist(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
-#    do.comlogs(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+    do.groundfish(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
 #    do.details(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
 #    do.observer(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
 #    do.millim(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
@@ -154,10 +155,10 @@ stomach.db = function( DS="complete.redo",
       speclist.flag = ifelse(DS %in% c("speclist.redo"),T,F)
       do.speclist(con=thiscon,redo = speclist.flag, this_showprogress=showprogress)
     }else{
-#    if (grepl(DS, pattern = "comlogs")){
-#      comlogs.flag = ifelse(DS %in% c("comlogs.redo"),T,F)
-#      do.comlogs(con=thiscon,redo = comlogs.flag, this_showprogress=showprogress)
-#    }
+    if (grepl(DS, pattern = "groundfish")){
+     groundfish.flag = ifelse(DS %in% c("groundfish.redo"),T,F)
+     do.groundfish(con=thiscon,redo = groundfish.flag, this_showprogress=showprogress)
+    }
 #    if (grepl(DS, pattern = "details")){
 #      details.flag = ifelse(DS %in% c("details.redo"),T,F)
 #      do.details(con=thiscon,redo=details.flag, this_showprogress=showprogress)
@@ -185,11 +186,12 @@ stomach.db = function( DS="complete.redo",
 #      juveniles.flag = ifelse(DS %in% c("juveniles.redo"),T,F)
 #      do.juveniles(con=thiscon,redo=juveniles.flag, this_showprogress=showprogress)
 #    }
-  }
-#    if (any(DS %in% c("complete","complete.redo"))) {
-#        complete.flag = ifelse(any(DS %in% c("complete.redo")),T,F)
-#        do.complete(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
+# }
+#   if (any(DS %in% c("complete","complete.redo"))) {
+#       complete.flag = ifelse(any(DS %in% c("complete.redo")),T,F)
+#       do.complete(con=thiscon,redo=complete.flag, this_showprogress=showprogress)
 #  }else{
+    }
   }
   gc()
   #RODBC::odbcClose(thiscon)
